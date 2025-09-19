@@ -22,18 +22,20 @@ class TaskController extends Controller
 
     public function index(IndexTasksRequest $request): AnonymousResourceCollection
     {
-        return TaskResource::collection($this->taskService->getTasks(
-            new GetTaskDto(
-                $request->getPage(),
-                $request->getPerPage(),
-                [
-                    'status' => $request->query('status'),
-                    'priority' => $request->query('priority'),
-                    'user_id' => $request->query('user_id'),
-                ],
-                ['created_at' => 'desc']
+        return TaskResource::collection(
+            $this->taskService->getTasks(
+                new GetTaskDto(
+                    $request->getPage(),
+                    $request->getPerPage(),
+                    [
+                        'status'   => $request->getStatus(),
+                        'priority' => $request->getPriority(),
+                        'user_id'  => $request->getUserId(),
+                    ],
+                    ['created_at' => 'desc']
+                )
             )
-        ));
+        );
     }
 
     public function store(StoreTaskRequest $request): JsonResponse
