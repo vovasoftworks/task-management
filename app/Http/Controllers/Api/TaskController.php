@@ -38,34 +38,30 @@ class TaskController extends Controller
         );
     }
 
-    public function store(StoreTaskRequest $request): JsonResponse
+    public function store(StoreTaskRequest $request): TaskResource
     {
         $task = $this->taskService->createTask(
             CreateTaskDto::fromRequest($request)
         );
 
-        $task->load('user');
+        $task->loadMissing('user');
 
-        return TaskResource::make($task)
-            ->response()
-            ->setStatusCode(201);
+        return TaskResource::make($task);
     }
 
-
-    public function show(int $id): JsonResponse
+    public function show(int $id): TaskResource
     {
         $task = $this->taskService->getTaskWithComments($id);
 
-        return TaskResource::make($task)->response();
+        return TaskResource::make($task);
     }
 
-    public function updateStatus(int $id, UpdateTaskStatusRequest $request): JsonResponse
+    public function updateStatus(int $id, UpdateTaskStatusRequest $request): TaskResource
     {
-        $dto = UpdateTaskStatusDto::fromRequest($id, $request);
-
+        $dto  = UpdateTaskStatusDto::fromRequest($id, $request);
         $task = $this->taskService->updateStatus($dto);
 
-        return TaskResource::make($task)->response();
+        return TaskResource::make($task);
     }
 }
 
